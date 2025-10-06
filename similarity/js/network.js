@@ -124,7 +124,58 @@ function createSelectionManager(options) {
   };
 }
 
-function createNetworkGraph(containerId, data) {
+function createLegend(containerId, nodesArray, colorScale) {
+  const container = d3.select(`#${containerId}`);
+  container.html('');
+
+  const regionIds = [...new Set(nodesArray.map(d => d.regionId))].sort((a, b) => a - b);
+
+  const legend = container.append('div')
+    .attr('class', 'box');
+
+  legend.append('h3')
+    .attr('class', 'title is-6')
+    .text('Region Extractions');
+
+  const list = legend.append('div')
+    .attr('class', 'legend-list');
+
+  regionIds.forEach(regionId => {
+    const item = list.append('div')
+      .attr('class', 'legend-item');
+
+    item.append('span')
+      .attr('class', 'legend-color')
+      .style('background-color', colorScale(regionId));
+
+    item.append('span')
+      .attr('class', 'legend-label')
+      .text(`Region ${regionId}`);
+  });
+}
+
+function generateColors(count) {
+  const baseHues = [171, 217, 229, 271, 348, 340, 24, 48, 141, 204];
+  const colors = [];
+  const saturations = [70, 85, 60];
+  const lightnesses = [50, 65, 40];
+
+  for (let i = 0; i < count; i++) {
+    const hueIndex = i % baseHues.length;
+    const satIndex = Math.floor(i / baseHues.length) % saturations.length;
+    const lightIndex = Math.floor(i / (baseHues.length * saturations.length)) % lightnesses.length;
+
+    const hue = baseHues[hueIndex];
+    const saturation = saturations[satIndex];
+    const lightness = lightnesses[lightIndex];
+
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+  }
+
+  return colors;
+}
+
+function createNetworkGraph(containerId, data, corpus) {
   const nodes = new Map();
   const imageIndex = new Map();
   const links = [];
@@ -162,7 +213,12 @@ function createNetworkGraph(containerId, data) {
   });
 
   const nodesArray = Array.from(nodes.values());
-  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+  const regionCount = Object.values(corpus).reduce((count, wit) =>
+    count + Object.keys(wit).length, 0
+  );
+  const colorScale = d3.scaleOrdinal(generateColors(regionCount));
+
+  createLegend('regions-info', nodesArray, colorScale);
 
   const simulation = d3.forceSimulation(nodesArray)
     .force("link", d3.forceLink(links).id(d => d.id).distance(d => 500 / (d.score ?? 10)).strength(d => (d.score ?? 10) / 100))
@@ -173,7 +229,7 @@ function createNetworkGraph(containerId, data) {
   const container = d3.select(`#${containerId}`);
 
   const clickMode = "<span class='icon px-4'><i class='fas fa-hand-pointer'></i></span> Switch to click mode"
-  const selectMode = "<span class='icon px-4'><i class='fas fa-up-down-left-right'></i></span> Switch to selection mode"
+  const selectMode = "<span class='icon px-4'><i class='fas fa-crop-alt'></i></span> Switch to selection mode"
 
   const toggleButton = container.append("button")
     .attr("class", "toggle-button button is-small is-primary")
