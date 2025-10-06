@@ -51,7 +51,13 @@
 
             <div class="column is-9">
                 <div class="box">
+                    <h2 class="title is-3 has-text-primary">Images network</h2>
                     <div id="graph-container"></div>
+                </div>
+
+                <div class="box">
+                    <h2 class="title is-3 has-text-primary">Witness network</h2>
+                    <div id="matrix-container"></div>
                 </div>
             </div>
         </div>
@@ -59,7 +65,10 @@
 </section>
 
 <script src="js/dataset.js"></script>
+<script src="js/common.js"></script>
 <script src="js/network.js"></script>
+<script src="js/matrix.js"></script>
+
 <script>
     const availableCorpus = {
         "Natural History": naturalHistoryCorpus,
@@ -83,23 +92,28 @@
 
     select.addEventListener('change', async (event) => {
         const corpusName = event.target.value;
-        const graphContainer = document.getElementById('graph-container');
+        const imageGraph = document.getElementById('graph-container');
+        const witnessGraph = document.getElementById('matrix-container');
         const corpusInfo = document.getElementById('corpus-info');
 
         if (!corpusName) {
-            graphContainer.innerHTML = '';
+            imageGraph.innerHTML = '';
+            witnessGraph.innerHTML = '';
             corpusInfo.style.display = 'none';
             return;
         }
 
-        graphContainer.innerHTML = '<progress class="progress is-primary" max="100">Loading...</progress>';
+        imageGraph.innerHTML = '<progress class="progress is-primary" max="100">Loading...</progress>';
+        witnessGraph.innerHTML = '<progress class="progress is-primary" max="100">Loading...</progress>';
 
         const corpus = availableCorpus[corpusName];
         const data = await loadAndFormatCorpus(corpus, corpusName);
 
         if (data) {
-            graphContainer.innerHTML = '';
+            imageGraph.innerHTML = '';
+            witnessGraph.innerHTML = '';
             createNetworkGraph("graph-container", data, corpus);
+            createMatrixGraph("matrix-container", data, corpus);
 
             const nodeCount = new Set([...data.map(d => d.img_1), ...data.map(d => d.img_2)]).size;
             const linkCount = data.length;
@@ -112,7 +126,7 @@
             document.getElementById('doc-count').textContent = docCount;
             corpusInfo.style.display = 'block';
         } else {
-            graphContainer.innerHTML = '<article class="message is-danger"><div class="message-body">Failed to load corpus data</div></article>';
+            imageGraph.innerHTML = '<article class="message is-danger"><div class="message-body">Failed to load corpus data</div></article>';
         }
     });
 </script>

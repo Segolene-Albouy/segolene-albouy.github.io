@@ -321,6 +321,16 @@ function createNetworkGraph(containerId, data, corpus) {
             .html(d => `<strong>Region:</strong> ${d.regionId}<br><strong>Page:</strong> ${d.page}`);
     }
 
+    // const handlers = createSimulationHandlers(simulation);
+    //
+    // selectionManager.setupDrag(node, {
+    //     start: handlers.dragstarted,
+    //     drag: handlers.dragged,
+    //     end: handlers.dragended
+    // });
+    //
+    // simulation.on("tick", () => handlers.tick(link, node));
+
     simulation.on("tick", () => {
         link
             .attr("x1", d => d.source.x)

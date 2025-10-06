@@ -109,3 +109,11 @@ body {
   font-size: 0.875rem;
   font-weight: 500;
 }
+
+.node-label {
+  user-select: none;
+}
+
+#matrix-container {
+  min-height: 600px;
+}

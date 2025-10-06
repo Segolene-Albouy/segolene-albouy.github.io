@@ -139,7 +139,7 @@ const weddigenPairs = [
 const physiologusCorpus = {
     physiologus: {
         845: {witnessId: 845, regionId: 845, witTitle: ""},
-        847: {witnessId: 847, regionId: [847, 2190], witTitle: ""},
+        847: {witnessId: 847, regionId: 847, witTitle: ""}, // [847, 2190]
         849: {witnessId: 849, regionId: 849, witTitle: ""},
         853: {witnessId: 853, regionId: 853, witTitle: ""},
         1728: {witnessId: 1728, regionId: 1679, witTitle: ""}
@@ -156,7 +156,7 @@ const physiologusPairs = [
 
 const hyginCorpus = {
     hygin: {
-        870: {witnessId: 870, regionId: [2196, 870], witTitle: ""},
+        870: {witnessId: 870, regionId: 2196, witTitle: ""}, // [2196, 870]
         913: {witnessId: 913, regionId: 913, witTitle: ""},
         914: {witnessId: 914, regionId: 914, witTitle: ""},
         973: {witnessId: 973, regionId: 973, witTitle: ""},
@@ -170,8 +170,8 @@ const hyginCorpus = {
 const phaenomenaCorpus = {
     draelants: {
         933: {witnessId: 933, regionId: 933, witTitle: ""},
-        935: {witnessId: 935, regionId: [2346, 935], witTitle: ""},
-        925: {witnessId: 925, regionId: [2347, 925], witTitle: ""},
+        935: {witnessId: 935, regionId: 2346, witTitle: ""}, // [2346, 935]
+        925: {witnessId: 925, regionId: 2347, witTitle: ""}, // [2347, 925]
         926: {witnessId: 926, regionId: 926, witTitle: ""},
         996: {witnessId: 996, regionId: 996, witTitle: ""}
     }
@@ -193,7 +193,7 @@ const dioscoridesCorpus = {
         1006: {witnessId: 1006, regionId: 1006, witTitle: ""},
         1008: {witnessId: 1008, regionId: 1008, witTitle: ""},
         1012: {witnessId: 1012, regionId: 1012, witTitle: ""},
-        1013: {witnessId: 1013, regionId: [1013, 2275], witTitle: ""}
+        1013: {witnessId: 1013, regionId: 1013, witTitle: ""} // [1013, 2275]
     }
 };
 // 1013 = best_vhs / 2275 = best_eida (to delete)
@@ -238,6 +238,7 @@ async function enrichCorpusWithTitles(corpus) {
     for (const subcorpus of Object.values(corpus)) {
         for (const witness of Object.values(subcorpus)) {
             // witnessIds.add(witness.witnessId);
+            // witnessIds.add(typeof witness.regionId === "object" ? witness.regionId[0] : witness.regionId);
             witnessIds.add(witness.regionId);
         }
     }
@@ -318,7 +319,10 @@ function formatData(data) {
 async function loadAndFormatCorpus(corpus, name) {
     await enrichCorpusWithTitles(corpus);
     const data = await corpusData(corpus, name);
-    return data ? formatData(data) : null;
+    if (data && !data.hasOwnProperty("message") && !data.hasOwnProperty("error")) {
+        return formatData(data);
+    }
+    return null;
 }
 
 // (async () => {
