@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Visualization</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-primary is-1">Network Visualization</h1>
+        <div class="columns">
+            <div class="column is-3">
+                <div class="box">
+                    <h2 class="title is-5">Corpus Selection</h2>
+                    <div class="field">
+                        <label class="label">Select Corpus</label>
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select id="corpus-select">
+                                    <option value="">-- Choose a corpus --</option>
+                                </select>
+                            </div>
+                            <span class="icon is-left"></span>
+                        </div>
+                    </div>
+
+                    <div id="corpus-info" class="content is-small mt-4" style="display: none;">
+                        <h3 class="title is-6">Corpus Information</h3>
+                        <ul>
+                            <li><strong>Nodes:</strong> <span id="node-count">0</span></li>
+                            <li><strong>Links:</strong> <span id="link-count">0</span></li>
+                            <li><strong>Documents:</strong> <span id="doc-count">0</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-9">
+                <div class="box">
+                    <div id="graph-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="js/dataset.js"></script>
+<script src="js/network.js"></script>
+<script>
+    const availableCorpus = {
+        "Natural History": naturalHistoryCorpus,
+        "Geometry": geometryCorpus,
+        "Mathematics": mathematicsCorpus,
+        "Weddigen": weddigenCorpus,
+        "Physiologus": physiologusCorpus,
+        "Hygin": hyginCorpus,
+        "Phaenomena": phaenomenaCorpus,
+        "Dioscorides": dioscoridesCorpus
+    };
+
+    const select = document.getElementById('corpus-select');
+
+    Object.keys(availableCorpus).forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+
+    select.addEventListener('change', async (event) => {
+        const corpusName = event.target.value;
+        const graphContainer = document.getElementById('graph-container');
+        const corpusInfo = document.getElementById('corpus-info');
+
+        if (!corpusName) {
+            graphContainer.innerHTML = '';
+            corpusInfo.style.display = 'none';
+            return;
+        }
+
+        graphContainer.innerHTML = '<progress class="progress is-primary" max="100">Loading...</progress>';
+
+        const corpus = availableCorpus[corpusName];
+        const data = await loadAndFormatCorpus(corpus, corpusName);
+
+        if (data) {
+            graphContainer.innerHTML = '';
+            createNetworkGraph("graph-container", data);
+
+            const nodeCount = new Set([...data.map(d => d.img_1), ...data.map(d => d.img_2)]).size;
+            const linkCount = data.length;
+            const docCount = Object.keys(corpus).length;
+
+            document.getElementById('node-count').textContent = nodeCount;
+            document.getElementById('link-count').textContent = linkCount;
+            document.getElementById('doc-count').textContent = docCount;
+            corpusInfo.style.display = 'block';
+        } else {
+            graphContainer.innerHTML = '<article class="message is-danger"><div class="message-body">Failed to load corpus data</div></article>';
+        }
+    });
+</script>
+</body>
+</html>

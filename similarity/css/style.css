@@ -1,0 +1,84 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  flex: 1;
+}
+
+#graph-container {
+  min-height: 600px;
+}
+
+.network-svg {
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  display: block;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: stroke-width 0.2s;
+}
+
+.node:hover {
+  stroke-width: 3;
+}
+
+.node.selected {
+  stroke: #00d1b2;
+  stroke-width: 4;
+}
+
+.selection-rect {
+  fill: rgba(0, 209, 178, 0.1);
+  stroke: #00574b;
+  stroke-width: 4;
+}
+
+.toggle-button {
+  margin-bottom: 1rem;
+}
+
+.selection-panel {
+  margin-top: 1.5rem;
+}
+
+.selection-panel h3 {
+  margin-bottom: 1rem;
+}
+
+.images-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  padding: 1rem;
+  width: 200px;
+  background: white;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+.card-info {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
