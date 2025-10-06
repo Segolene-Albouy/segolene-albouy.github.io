@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="../img/favicon.png">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
@@ -25,13 +26,12 @@
                     <h2 class="title is-5">Corpus Selection</h2>
                     <div class="field">
                         <label class="label">Select Corpus</label>
-                        <div class="control has-icons-left">
+                        <div class="control">
                             <div class="select is-fullwidth">
                                 <select id="corpus-select">
                                     <option value="">-- Choose a corpus --</option>
                                 </select>
                             </div>
-                            <span class="icon is-left"></span>
                         </div>
                     </div>
 
@@ -40,6 +40,7 @@
                         <ul>
                             <li><strong>Nodes:</strong> <span id="node-count">0</span></li>
                             <li><strong>Links:</strong> <span id="link-count">0</span></li>
+                            <li><strong>Sub-corpus:</strong> <span id="subcorpus-count">0</span></li>
                             <li><strong>Documents:</strong> <span id="doc-count">0</span></li>
                         </ul>
                     </div>
@@ -102,10 +103,12 @@
 
             const nodeCount = new Set([...data.map(d => d.img_1), ...data.map(d => d.img_2)]).size;
             const linkCount = data.length;
-            const docCount = Object.keys(corpus).length;
+            const subCorpusCount = Object.keys(corpus).length;
+            const docCount = Object.values(corpus).reduce((count, wit) => count + Object.keys(wit).length, 0);
 
             document.getElementById('node-count').textContent = nodeCount;
             document.getElementById('link-count').textContent = linkCount;
+            document.getElementById('subcorpus-count').textContent = subCorpusCount;
             document.getElementById('doc-count').textContent = docCount;
             corpusInfo.style.display = 'block';
         } else {

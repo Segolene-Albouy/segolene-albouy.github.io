@@ -1,349 +1,352 @@
 function createSelectionManager(options) {
-  const {
-    svg,
-    g,
-    nodes,
-    onSelectionChange,
-    getNodePosition = d => ({ x: d.x, y: d.y }),
-    getNodeId = d => d.id
-  } = options;
+    const {
+        svg,
+        g,
+        nodes,
+        onSelectionChange,
+        getNodePosition = d => ({x: d.x, y: d.y}),
+        getNodeId = d => d.id
+    } = options;
 
-  const selectedNodes = new Set();
-  const selectionOrder = [];
-  let selectionMode = false;
-  let selectionRect = null;
-  let selectionStart = null;
+    const selectedNodes = new Set();
+    const selectionOrder = [];
+    let selectionMode = false;
+    let selectionRect = null;
+    let selectionStart = null;
 
-  function toggleSelectionMode() {
-    selectionMode = !selectionMode;
-    svg.style("cursor", selectionMode ? "crosshair" : "default");
-    return selectionMode;
-  }
-
-  function toggleNode(nodeId) {
-    if (selectedNodes.has(nodeId)) {
-      selectedNodes.delete(nodeId);
-      const index = selectionOrder.indexOf(nodeId);
-      if (index > -1) selectionOrder.splice(index, 1);
-    } else {
-      selectedNodes.add(nodeId);
-      selectionOrder.push(nodeId);
+    function toggleSelectionMode() {
+        selectionMode = !selectionMode;
+        svg.style("cursor", selectionMode ? "crosshair" : "default");
+        return selectionMode;
     }
-    onSelectionChange(selectedNodes, selectionOrder);
-  }
 
-  function clearSelection() {
-    selectedNodes.clear();
-    selectionOrder.length = 0;
-    onSelectionChange(selectedNodes, selectionOrder);
-  }
-
-  svg
-    .on("mousedown", function(event) {
-      if (!selectionMode) return;
-      event.preventDefault();
-
-      const [x, y] = d3.pointer(event, g.node());
-      selectionStart = { x, y };
-
-      selectionRect = g.append("rect")
-        .attr("class", "selection-rect")
-        .attr("x", x)
-        .attr("y", y)
-        .attr("width", 0)
-        .attr("height", 0);
-    })
-    .on("mousemove", function(event) {
-      if (!selectionMode || !selectionRect) return;
-
-      const [x, y] = d3.pointer(event, g.node());
-      const width = x - selectionStart.x;
-      const height = y - selectionStart.y;
-
-      selectionRect
-        .attr("x", width < 0 ? x : selectionStart.x)
-        .attr("y", height < 0 ? y : selectionStart.y)
-        .attr("width", Math.abs(width))
-        .attr("height", Math.abs(height));
-    })
-    .on("mouseup", function(event) {
-      if (!selectionMode || !selectionRect) return;
-
-      const [x, y] = d3.pointer(event, g.node());
-      const x1 = Math.min(selectionStart.x, x);
-      const y1 = Math.min(selectionStart.y, y);
-      const x2 = Math.max(selectionStart.x, x);
-      const y2 = Math.max(selectionStart.y, y);
-
-      selectedNodes.clear();
-      selectionOrder.length = 0;
-
-      const newNodes = [];
-      nodes.forEach(d => {
-        const pos = getNodePosition(d);
-        if (pos.x >= x1 && pos.x <= x2 && pos.y >= y1 && pos.y <= y2) {
-          newNodes.push(getNodeId(d));
+    function toggleNode(nodeId) {
+        if (selectedNodes.has(nodeId)) {
+            selectedNodes.delete(nodeId);
+            const index = selectionOrder.indexOf(nodeId);
+            if (index > -1) selectionOrder.splice(index, 1);
+        } else {
+            selectedNodes.add(nodeId);
+            selectionOrder.push(nodeId);
         }
-      });
-
-      newNodes.sort((a, b) => a - b);
-      newNodes.forEach(id => {
-        selectedNodes.add(id);
-        selectionOrder.push(id);
-      });
-
-      onSelectionChange(selectedNodes, selectionOrder);
-
-      selectionRect.remove();
-      selectionRect = null;
-      selectionStart = null;
-    });
-
-  return {
-    toggleSelectionMode,
-    toggleNode,
-    clearSelection,
-    isSelectionMode: () => selectionMode,
-    getSelectedNodes: () => selectedNodes,
-    getSelectionOrder: () => selectionOrder,
-    setupNodeClick: (nodeSelection) => {
-      nodeSelection.on("click", function(event, d) {
-        event.stopPropagation();
-        toggleNode(getNodeId(d));
-      });
-    },
-    setupDrag: (nodeSelection, dragFunctions) => {
-      nodeSelection.call(
-        d3.drag()
-          .filter(() => !selectionMode)
-          .on("start", dragFunctions.start)
-          .on("drag", dragFunctions.drag)
-          .on("end", dragFunctions.end)
-      );
+        onSelectionChange(selectedNodes, selectionOrder);
     }
-  };
+
+    function clearSelection() {
+        selectedNodes.clear();
+        selectionOrder.length = 0;
+        onSelectionChange(selectedNodes, selectionOrder);
+    }
+
+    svg
+        .on("mousedown", function (event) {
+            if (!selectionMode) return;
+            event.preventDefault();
+
+            const [x, y] = d3.pointer(event, g.node());
+            selectionStart = {x, y};
+
+            selectionRect = g.append("rect")
+                .attr("class", "selection-rect")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("width", 0)
+                .attr("height", 0);
+        })
+        .on("mousemove", function (event) {
+            if (!selectionMode || !selectionRect) return;
+
+            const [x, y] = d3.pointer(event, g.node());
+            const width = x - selectionStart.x;
+            const height = y - selectionStart.y;
+
+            selectionRect
+                .attr("x", width < 0 ? x : selectionStart.x)
+                .attr("y", height < 0 ? y : selectionStart.y)
+                .attr("width", Math.abs(width))
+                .attr("height", Math.abs(height));
+        })
+        .on("mouseup", function (event) {
+            if (!selectionMode || !selectionRect) return;
+
+            const [x, y] = d3.pointer(event, g.node());
+            const x1 = Math.min(selectionStart.x, x);
+            const y1 = Math.min(selectionStart.y, y);
+            const x2 = Math.max(selectionStart.x, x);
+            const y2 = Math.max(selectionStart.y, y);
+
+            selectedNodes.clear();
+            selectionOrder.length = 0;
+
+            const newNodes = [];
+            nodes.forEach(d => {
+                const pos = getNodePosition(d);
+                if (pos.x >= x1 && pos.x <= x2 && pos.y >= y1 && pos.y <= y2) {
+                    newNodes.push(getNodeId(d));
+                }
+            });
+
+            newNodes.sort((a, b) => a - b);
+            newNodes.forEach(id => {
+                selectedNodes.add(id);
+                selectionOrder.push(id);
+            });
+
+            onSelectionChange(selectedNodes, selectionOrder);
+
+            selectionRect.remove();
+            selectionRect = null;
+            selectionStart = null;
+        });
+
+    return {
+        toggleSelectionMode,
+        toggleNode,
+        clearSelection,
+        isSelectionMode: () => selectionMode,
+        getSelectedNodes: () => selectedNodes,
+        getSelectionOrder: () => selectionOrder,
+        setupNodeClick: (nodeSelection) => {
+            nodeSelection.on("click", function (event, d) {
+                event.stopPropagation();
+                toggleNode(getNodeId(d));
+            });
+        },
+        setupDrag: (nodeSelection, dragFunctions) => {
+            nodeSelection.call(
+                d3.drag()
+                    .filter(() => !selectionMode)
+                    .on("start", dragFunctions.start)
+                    .on("drag", dragFunctions.drag)
+                    .on("end", dragFunctions.end)
+            );
+        }
+    };
 }
 
 function createLegend(containerId, nodesArray, colorScale) {
-  const container = d3.select(`#${containerId}`);
-  container.html('');
+    const container = d3.select(`#${containerId}`);
+    container.html('');
 
-  const regionIds = [...new Set(nodesArray.map(d => d.regionId))].sort((a, b) => a - b);
+    const regionIds = [...new Set(nodesArray.map(d => d.regionId))].sort((a, b) => a - b);
 
-  const legend = container.append('div')
-    .attr('class', 'box');
+    const legend = container.append('div')
+        .attr('class', 'box');
 
-  legend.append('h3')
-    .attr('class', 'title is-6')
-    .text('Region Extractions');
+    legend.append('h3')
+        .attr('class', 'title is-6')
+        .text('Region Extractions');
 
-  const list = legend.append('div')
-    .attr('class', 'legend-list');
+    const list = legend.append('div')
+        .attr('class', 'legend-list');
 
-  regionIds.forEach(regionId => {
-    const item = list.append('div')
-      .attr('class', 'legend-item');
+    regionIds.forEach(regionId => {
+        const metadata = regionMetadataMap.get(regionId);
+        if (!metadata) return;
 
-    item.append('span')
-      .attr('class', 'legend-color')
-      .style('background-color', colorScale(regionId));
+        const item = list.append('div')
+            .attr('class', 'legend-item');
 
-    item.append('span')
-      .attr('class', 'legend-label')
-      .text(`Region ${regionId}`);
-  });
+        item.append('span')
+            .attr('class', 'legend-color')
+            .style('background-color', colorScale(regionId));
+
+        item.append('span')
+            .attr('class', 'legend-label')
+            .html(`<a href="${BASE_URL}vhs/witness/${metadata.witnessId}/regions/${regionId}" target="_blank">${metadata.witTitle}</a>`);
+    });
 }
 
 function generateColors(count) {
-  const baseHues = [171, 217, 229, 271, 348, 340, 24, 48, 141, 204];
-  const colors = [];
-  const saturations = [70, 85, 60];
-  const lightnesses = [50, 65, 40];
+    const baseHues = [171, 217, 229, 271, 348, 340, 24, 48, 141, 204];
+    const colors = [];
+    const saturations = [70, 85, 60];
+    const lightnesses = [50, 65, 40];
 
-  for (let i = 0; i < count; i++) {
-    const hueIndex = i % baseHues.length;
-    const satIndex = Math.floor(i / baseHues.length) % saturations.length;
-    const lightIndex = Math.floor(i / (baseHues.length * saturations.length)) % lightnesses.length;
+    for (let i = 0; i < count; i++) {
+        const hueIndex = i % baseHues.length;
+        const satIndex = Math.floor(i / baseHues.length) % saturations.length;
+        const lightIndex = Math.floor(i / (baseHues.length * saturations.length)) % lightnesses.length;
 
-    const hue = baseHues[hueIndex];
-    const saturation = saturations[satIndex];
-    const lightness = lightnesses[lightIndex];
+        const hue = baseHues[hueIndex];
+        const saturation = saturations[satIndex];
+        const lightness = lightnesses[lightIndex];
 
-    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
-  }
+        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+    }
 
-  return colors;
+    return colors;
 }
 
 function createNetworkGraph(containerId, data, corpus) {
-  const nodes = new Map();
-  const imageIndex = new Map();
-  const links = [];
-  const width = 954;
-  const height = 600;
+    const nodes = new Map();
+    const imageIndex = new Map();
+    const links = [];
+    const width = 954;
+    const height = 600;
 
-  data.forEach(d => {
-    if (!nodes.has(d.img_1)) {
-      nodes.set(d.img_1, {
-        id: d.img_1,
-        regionId: d.regions_id_1,
-        page: d.page_1
-      });
-    }
-    if (!nodes.has(d.img_2)) {
-      nodes.set(d.img_2, {
-        id: d.img_2,
-        regionId: d.regions_id_2,
-        page: d.page_2
-      });
-    }
+    data.forEach(d => {
+        if (!nodes.has(d.img_1)) {
+            nodes.set(d.img_1, {
+                id: d.img_1,
+                regionId: d.regions_id_1,
+                page: d.page_1
+            });
+        }
+        if (!nodes.has(d.img_2)) {
+            nodes.set(d.img_2, {
+                id: d.img_2,
+                regionId: d.regions_id_2,
+                page: d.page_2
+            });
+        }
 
-    if (!imageIndex.has(d.img_1)) imageIndex.set(d.img_1, []);
-    if (!imageIndex.has(d.img_2)) imageIndex.set(d.img_2, []);
+        if (!imageIndex.has(d.img_1)) imageIndex.set(d.img_1, []);
+        if (!imageIndex.has(d.img_2)) imageIndex.set(d.img_2, []);
 
-    imageIndex.get(d.img_1).push(d);
-    imageIndex.get(d.img_2).push(d);
+        imageIndex.get(d.img_1).push(d);
+        imageIndex.get(d.img_2).push(d);
 
-    links.push({
-      source: d.img_1,
-      target: d.img_2,
-      score: d.score,
-      category: d.category
+        links.push({
+            source: d.img_1,
+            target: d.img_2,
+            score: d.score,
+            category: d.category
+        });
     });
-  });
 
-  const nodesArray = Array.from(nodes.values());
-  const regionCount = Object.values(corpus).reduce((count, wit) =>
-    count + Object.keys(wit).length, 0
-  );
-  const colorScale = d3.scaleOrdinal(generateColors(regionCount));
+    const nodesArray = Array.from(nodes.values());
+    const regionCount = Object.values(corpus).reduce((count, wit) =>
+        count + Object.keys(wit).length, 0
+    );
+    const colorScale = d3.scaleOrdinal(generateColors(regionCount));
 
-  createLegend('regions-info', nodesArray, colorScale);
+    createLegend('regions-info', nodesArray, colorScale, corpus);
 
-  const simulation = d3.forceSimulation(nodesArray)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(d => 500 / (d.score ?? 10)).strength(d => (d.score ?? 10) / 100))
-    .force("charge", d3.forceManyBody().strength(-300))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(35));
+    const simulation = d3.forceSimulation(nodesArray)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(d => 500 / (d.score ?? 10)).strength(d => (d.score ?? 10) / 100))
+        .force("charge", d3.forceManyBody().strength(-300))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide().radius(35));
 
-  const container = d3.select(`#${containerId}`);
+    const container = d3.select(`#${containerId}`);
 
-  const clickMode = "<span class='icon px-4'><i class='fas fa-hand-pointer'></i></span> Switch to click mode"
-  const selectMode = "<span class='icon px-4'><i class='fas fa-crop-alt'></i></span> Switch to selection mode"
+    const clickMode = "<span class='icon px-4'><i class='fas fa-hand-pointer'></i></span> Switch to click mode"
+    const selectMode = "<span class='icon px-4'><i class='fas fa-crop-alt'></i></span> Switch to selection mode"
 
-  const toggleButton = container.append("button")
-    .attr("class", "toggle-button button is-small is-primary")
-    .html(selectMode);
+    const toggleButton = container.append("button")
+        .attr("class", "toggle-button button is-small is-primary")
+        .html(selectMode);
 
-  const svg = container.append("svg")
-    .attr("class", "network-svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height]);
+    const svg = container.append("svg")
+        .attr("class", "network-svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", [0, 0, width, height]);
 
-  const g = svg.append("g");
+    const g = svg.append("g");
 
-  const selectionManager = createSelectionManager({
-    svg,
-    g,
-    nodes: nodesArray,
-    onSelectionChange: (selected) => {
-      node
-        .classed("selected", d => selected.has(d.id));
-      updateSelection(nodesArray.filter(d => selected.has(d.id)));
+    const selectionManager = createSelectionManager({
+        svg,
+        g,
+        nodes: nodesArray,
+        onSelectionChange: (selected) => {
+            node
+                .classed("selected", d => selected.has(d.id));
+            updateSelection(nodesArray.filter(d => selected.has(d.id)));
+        }
+    });
+
+    toggleButton.on("click", function () {
+        const active = selectionManager.toggleSelectionMode();
+        d3.select(this)
+            .html(active ? clickMode : selectMode)
+            .classed("active", active);
+    });
+
+    svg.call(d3.zoom()
+        .scaleExtent([0.1, 10])
+        .filter(() => !selectionManager.isSelectionMode())
+        .on("zoom", ({transform}) => g.attr("transform", transform)));
+
+    const link = g.append("g")
+        .selectAll("line")
+        .data(links)
+        .join("line")
+        .attr("class", "link")
+        .attr("stroke-width", d => (d.score ?? 10) / 5);
+
+    const node = g.append("g")
+        .selectAll("circle")
+        .data(nodesArray)
+        .join("circle")
+        .attr("class", "node")
+        .attr("r", 32)
+        .attr("fill", d => colorScale(d.regionId));
+
+    selectionManager.setupNodeClick(node);
+    selectionManager.setupDrag(node, {
+        start: dragstarted,
+        drag: dragged,
+        end: dragended
+    });
+
+    node.append("title")
+        .text(d => `Region: ${d.regionId}\nPage: ${d.page}`);
+
+    const selectionDiv = container.append("div")
+        .attr("class", "selection-panel");
+
+    selectionDiv.append("h3").attr("class", "title is-5")
+        .text("Selected Nodes");
+
+    const imagesContainer = selectionDiv.append("div")
+        .attr("class", "images-container");
+
+    function updateSelection(selectedData) {
+        const cards = imagesContainer.selectAll(".card")
+            .data(selectedData, d => d.id);
+
+        cards.exit().remove();
+
+        const cardsEnter = cards.enter()
+            .append("div")
+            .attr("class", "card");
+
+        cardsEnter.append("img")
+            .attr("src", d => d.id);
+
+        cardsEnter.append("div")
+            .attr("class", "card-info")
+            .html(d => `<strong>Region:</strong> ${d.regionId}<br><strong>Page:</strong> ${d.page}`);
     }
-  });
 
-  toggleButton.on("click", function() {
-    const active = selectionManager.toggleSelectionMode();
-    d3.select(this)
-      .html(active ? clickMode : selectMode)
-      .classed("active", active);
-  });
+    simulation.on("tick", () => {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
 
-  svg.call(d3.zoom()
-    .scaleExtent([0.1, 10])
-    .filter(() => !selectionManager.isSelectionMode())
-    .on("zoom", ({transform}) => g.attr("transform", transform)));
+        node
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+    });
 
-  const link = g.append("g")
-    .selectAll("line")
-    .data(links)
-    .join("line")
-    .attr("class", "link")
-    .attr("stroke-width", d => (d.score ?? 10) / 5);
+    function dragstarted(event) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        event.subject.fx = event.subject.x;
+        event.subject.fy = event.subject.y;
+    }
 
-  const node = g.append("g")
-    .selectAll("circle")
-    .data(nodesArray)
-    .join("circle")
-    .attr("class", "node")
-    .attr("r", 32)
-    .attr("fill", d => colorScale(d.regionId));
+    function dragged(event) {
+        event.subject.fx = event.x;
+        event.subject.fy = event.y;
+    }
 
-  selectionManager.setupNodeClick(node);
-  selectionManager.setupDrag(node, {
-    start: dragstarted,
-    drag: dragged,
-    end: dragended
-  });
-
-  node.append("title")
-    .text(d => `Region: ${d.regionId}\nPage: ${d.page}`);
-
-  const selectionDiv = container.append("div")
-    .attr("class", "selection-panel");
-
-  selectionDiv.append("h3").attr("class", "title is-5")
-    .text("Selected Nodes");
-
-  const imagesContainer = selectionDiv.append("div")
-    .attr("class", "images-container");
-
-  function updateSelection(selectedData) {
-    const cards = imagesContainer.selectAll(".card")
-      .data(selectedData, d => d.id);
-
-    cards.exit().remove();
-
-    const cardsEnter = cards.enter()
-      .append("div")
-      .attr("class", "card");
-
-    cardsEnter.append("img")
-      .attr("src", d => d.id);
-
-    cardsEnter.append("div")
-      .attr("class", "card-info")
-      .html(d => `<strong>Region:</strong> ${d.regionId}<br><strong>Page:</strong> ${d.page}`);
-  }
-
-  simulation.on("tick", () => {
-    link
-      .attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
-
-    node
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y);
-  });
-
-  function dragstarted(event) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    event.subject.fx = event.subject.x;
-    event.subject.fy = event.subject.y;
-  }
-
-  function dragged(event) {
-    event.subject.fx = event.x;
-    event.subject.fy = event.y;
-  }
-
-  function dragended(event) {
-    if (!event.active) simulation.alphaTarget(0);
-    event.subject.fx = null;
-    event.subject.fy = null;
-  }
+    function dragended(event) {
+        if (!event.active) simulation.alphaTarget(0);
+        event.subject.fx = null;
+        event.subject.fy = null;
+    }
 }

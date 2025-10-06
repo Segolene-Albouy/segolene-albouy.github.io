@@ -1,9 +1,38 @@
 // key (Witness id) => value (RegionExtraction id(s))
 const naturalHistoryCorpus = {
-    buffon: {23: 23, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 30: 30, 31: 31, 32: 32, 2335: 2348, 2336: 2350, 2337: 2349},
-    encyclo_animal: {248: 248},
-    fajardo: {2284: 2288, 2285: 2289, 2286: 2297, 2287: 2296, 2288: 2295, 2289: 2298, 2290: 2293, 2291: 2292, 2292: 2291, 2293: 2299, 2297: 2294},
-    bewick: {2339: 2353}
+    buffon: {
+        23: {witnessId: 23, regionId: 23, witTitle: ""},
+        24: {witnessId: 24, regionId: 24, witTitle: ""},
+        25: {witnessId: 25, regionId: 25, witTitle: ""},
+        26: {witnessId: 26, regionId: 26, witTitle: ""},
+        27: {witnessId: 27, regionId: 27, witTitle: ""},
+        28: {witnessId: 28, regionId: 28, witTitle: ""},
+        30: {witnessId: 30, regionId: 30, witTitle: ""},
+        31: {witnessId: 31, regionId: 31, witTitle: ""},
+        32: {witnessId: 32, regionId: 32, witTitle: ""},
+        2335: {witnessId: 2335, regionId: 2348, witTitle: ""},
+        2336: {witnessId: 2336, regionId: 2350, witTitle: ""},
+        2337: {witnessId: 2337, regionId: 2349, witTitle: ""}
+    },
+    encyclo_animal: {
+        248: {witnessId: 248, regionId: 248, witTitle: ""}
+    },
+    fajardo: {
+        2284: {witnessId: 2284, regionId: 2288, witTitle: ""},
+        2285: {witnessId: 2285, regionId: 2289, witTitle: ""},
+        2286: {witnessId: 2286, regionId: 2297, witTitle: ""},
+        2287: {witnessId: 2287, regionId: 2296, witTitle: ""},
+        2288: {witnessId: 2288, regionId: 2295, witTitle: ""},
+        2289: {witnessId: 2289, regionId: 2298, witTitle: ""},
+        2290: {witnessId: 2290, regionId: 2293, witTitle: ""},
+        2291: {witnessId: 2291, regionId: 2292, witTitle: ""},
+        2292: {witnessId: 2292, regionId: 2291, witTitle: ""},
+        2293: {witnessId: 2293, regionId: 2299, witTitle: ""},
+        2297: {witnessId: 2297, regionId: 2294, witTitle: ""}
+    },
+    bewick: {
+        2339: {witnessId: 2339, regionId: 2353, witTitle: ""}
+    }
 };
 
 // pairs of RegionExtraction ids that were expertly annotated
@@ -41,7 +70,13 @@ const naturalHistoryPairs = [
 ];
 
 const geometryCorpus = {
-    geometry: {2282: 2290, 2309: 2312, 2310: 2310, 2312: 2313, 2314: 2318}
+    geometry: {
+        2282: {witnessId: 2282, regionId: 2290, witTitle: ""},
+        2309: {witnessId: 2309, regionId: 2312, witTitle: ""},
+        2310: {witnessId: 2310, regionId: 2310, witTitle: ""},
+        2312: {witnessId: 2312, regionId: 2313, witTitle: ""},
+        2314: {witnessId: 2314, regionId: 2318, witTitle: ""}
+    }
 };
 
 const geometryPairs = [
@@ -52,10 +87,24 @@ const geometryPairs = [
 ];
 
 const mathematicsCorpus = {
-    lexicon_technikum: {77: 2320, 2325: 2321},
-    chambers: {75: 75, 76: 76},
-    encyclo_math: {247: 247},
-    wolff: {116: 116, 117: 117, 118: 118, 119: 119, 120: 120}
+    lexicon_technikum: {
+        77: {witnessId: 77, regionId: 2320, witTitle: ""},
+        2325: {witnessId: 2325, regionId: 2321, witTitle: ""}
+    },
+    chambers: {
+        75: {witnessId: 75, regionId: 75, witTitle: ""},
+        76: {witnessId: 76, regionId: 76, witTitle: ""}
+    },
+    encyclo_math: {
+        247: {witnessId: 247, regionId: 247, witTitle: ""}
+    },
+    wolff: {
+        116: {witnessId: 116, regionId: 116, witTitle: ""},
+        117: {witnessId: 117, regionId: 117, witTitle: ""},
+        118: {witnessId: 118, regionId: 118, witTitle: ""},
+        119: {witnessId: 119, regionId: 119, witTitle: ""},
+        120: {witnessId: 120, regionId: 120, witTitle: ""}
+    }
 };
 
 const mathematicsPairs = [
@@ -70,8 +119,15 @@ const mathematicsPairs = [
 
 // A = 2185, 2242 / B = 2239, 2243, 2259
 const weddigenCorpus = {
-    weddingen: {2185: 2126, 2242: 2186, 2239: 2181, 2243: 2182, 2259: 2234}
+    weddingen: {
+        2185: {witnessId: 2185, regionId: 2126, witTitle: ""},
+        2242: {witnessId: 2242, regionId: 2186, witTitle: ""},
+        2239: {witnessId: 2239, regionId: 2181, witTitle: ""},
+        2243: {witnessId: 2243, regionId: 2182, witTitle: ""},
+        2259: {witnessId: 2259, regionId: 2234, witTitle: ""}
+    }
 };
+
 
 const weddigenPairs = [
     [2181, 2186], [2181, 2182], [2181, 2234], [2181, 2126],
@@ -81,7 +137,13 @@ const weddigenPairs = [
 ];
 
 const physiologusCorpus = {
-    physiologus: {845: 845, 847: [847, 2190], 849: 849, 853: 853, 1728: 1679}
+    physiologus: {
+        845: {witnessId: 845, regionId: 845, witTitle: ""},
+        847: {witnessId: 847, regionId: [847, 2190], witTitle: ""},
+        849: {witnessId: 849, regionId: 849, witTitle: ""},
+        853: {witnessId: 853, regionId: 853, witTitle: ""},
+        1728: {witnessId: 1728, regionId: 1679, witTitle: ""}
+    }
 };
 // 847 = more complete but duplicated regions / 2190
 
@@ -93,14 +155,26 @@ const physiologusPairs = [
 ];
 
 const hyginCorpus = {
-    hygin: {870: [2196, 870], 913: 913, 914: 914, 973: 973, 975: 975}
+    hygin: {
+        870: {witnessId: 870, regionId: [2196, 870], witTitle: ""},
+        913: {witnessId: 913, regionId: 913, witTitle: ""},
+        914: {witnessId: 914, regionId: 914, witTitle: ""},
+        973: {witnessId: 973, regionId: 973, witTitle: ""},
+        975: {witnessId: 975, regionId: 975, witTitle: ""}
+    }
 };
 // 870 = B&W / 2196 = color
 
 // no validated pairs for hygin
 
 const phaenomenaCorpus = {
-    draelants: {933: 933, 935: [2346, 935], 925: [2347, 925], 926: 926, 996: 996}
+    draelants: {
+        933: {witnessId: 933, regionId: 933, witTitle: ""},
+        935: {witnessId: 935, regionId: [2346, 935], witTitle: ""},
+        925: {witnessId: 925, regionId: [2347, 925], witTitle: ""},
+        926: {witnessId: 926, regionId: 926, witTitle: ""},
+        996: {witnessId: 996, regionId: 996, witTitle: ""}
+    }
 };
 // 935 / 2346 = a bit more complete
 // 925 / 2347 = a bit more complete
@@ -113,7 +187,14 @@ const phaenomenaPairs = [
 ];
 
 const dioscoridesCorpus = {
-    dioscorides: {1001: 1001, 1003: 1003, 1006: 1006, 1008: 1008, 1012: 1012, 1013: [1013, 2275]}
+    dioscorides: {
+        1001: {witnessId: 1001, regionId: 1001, witTitle: ""},
+        1003: {witnessId: 1003, regionId: 1003, witTitle: ""},
+        1006: {witnessId: 1006, regionId: 1006, witTitle: ""},
+        1008: {witnessId: 1008, regionId: 1008, witTitle: ""},
+        1012: {witnessId: 1012, regionId: 1012, witTitle: ""},
+        1013: {witnessId: 1013, regionId: [1013, 2275], witTitle: ""}
+    }
 };
 // 1013 = best_vhs / 2275 = best_eida (to delete)
 
@@ -129,17 +210,67 @@ const BASE_URL = "https://iscd.huma-num.fr/";
 
 const urlTemplate = "vhs/witness/{witnessId}/regions/pairs?regionsIds={regionIds}&category={category}&excludeSelf=true";
 
-function getRegionId(v) {
-    return v;
+async function getWitnessTitle(witnessId) {
+    return await fetch(BASE_URL + `search/regions/?id=${witnessId}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            if (data.hasOwnProperty("results") && data.results.length > 0) {
+                let title = data.results[0].title.split(" | ");
+                title.shift();
+                return title[0] || `Region Extraction ${witnessId}`;
+            }
+            return `Region Extraction #${witnessId}`;
+        })
+        .catch(e => {
+            console.error(`Error fetching title for witness ${witnessId}:`, e);
+            return `Region Extraction #${witnessId}`;
+        });
+}
+
+const regionMetadataMap = new Map();
+
+async function enrichCorpusWithTitles(corpus) {
+    const witnessIds = new Set();
+
+    for (const subcorpus of Object.values(corpus)) {
+        for (const witness of Object.values(subcorpus)) {
+            // witnessIds.add(witness.witnessId);
+            witnessIds.add(witness.regionId);
+        }
+    }
+
+    const titlePromises = Array.from(witnessIds).map(async witnessId => {
+        const title = await getWitnessTitle(witnessId);
+        return [witnessId, title];
+    });
+
+    const titles = await Promise.all(titlePromises);
+    const titleMap = Object.fromEntries(titles);
+
+    for (const subcorpus of Object.values(corpus)) {
+        for (const witness of Object.values(subcorpus)) {
+            witness.witTitle = titleMap[witness.regionId];
+            regionMetadataMap.set(witness.regionId, {
+                witnessId: witness.witnessId,
+                witTitle: witness.witTitle,
+                regionId: witness.regionId
+            });
+        }
+    }
 }
 
 async function corpusData(corpus, corpusName = "") {
     const regionIds = [];
     let witnessId;
 
-    for (const [subcorpusName, witnesses] of Object.entries(corpus)) {
-        witnessId = Object.keys(witnesses)[0];
-        regionIds.push(...Object.values(witnesses).map(v => getRegionId(v)));
+    for (const subcorpus of Object.values(corpus)) {
+        for (const witness of Object.values(subcorpus)) {
+            witnessId = witness.witnessId;
+            regionIds.push(witness.regionId);
+        }
     }
 
     const regionIdsStr = regionIds.join(",");
@@ -185,6 +316,7 @@ function formatData(data) {
 }
 
 async function loadAndFormatCorpus(corpus, name) {
+    await enrichCorpusWithTitles(corpus);
     const data = await corpusData(corpus, name);
     return data ? formatData(data) : null;
 }
