@@ -139,7 +139,7 @@ const weddigenPairs = [
 const physiologusCorpus = {
     physiologus: {
         845: {witnessId: 845, regionId: 845, witTitle: ""},
-        847: {witnessId: 847, regionId: 847, witTitle: ""}, // [847, 2190]
+        847: {witnessId: 847, regionId: 2190, witTitle: ""}, // [847, 2190]
         849: {witnessId: 849, regionId: 849, witTitle: ""},
         853: {witnessId: 853, regionId: 853, witTitle: ""},
         1728: {witnessId: 1728, regionId: 1679, witTitle: ""}
@@ -206,7 +206,7 @@ const dioscoridesPairs = [
     [1012, 1013]
 ];
 
-const BASE_URL = "https://iscd.huma-num.fr/";
+const BASE_URL = "https://vhs.huma-num.fr/";
 
 const urlTemplate = "vhs/witness/{witnessId}/regions/pairs?regionsIds={regionIds}&category={category}&excludeSelf=true";
 
@@ -220,7 +220,7 @@ async function getWitnessTitle(witnessId) {
             if (data.hasOwnProperty("results") && data.results.length > 0) {
                 let title = data.results[0].title.split(" | ");
                 title.shift();
-                return title[0] || `Region Extraction ${witnessId}`;
+                return title.join(" | ") || `Region Extraction ${witnessId}`;
             }
             return `Region Extraction #${witnessId}`;
         })
